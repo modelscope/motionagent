@@ -1,0 +1,16 @@
+modelscope==1.8.4
+gradio>=3.39.0
+torch==2.0.1
+invisible_watermark
+safetensors
+diffusers==0.18.0
+xformers==0.0.20
+torchsde
+open_clip_torch>=2.0.2
+opencv-python-headless
+opencv-python 
+einops>=0.4
+rotary-embedding-torch
+fairscale 
+scipy
+imageio
