@@ -36,10 +36,7 @@ STYLE_TEMPLATE = {
     "lighting": ["studio lighting","film lighting","beautiful lighting","Soft illumination","dramatic lighting","rim lights","Back lighting","Split Lighting","mood lighting","Volumetric lighting","Rembrandt Lighting","bioluminescence","Crepuscular Ray","rays of shimmering light"],
 } 
 
-pipe = pipeline(task=Tasks.text_to_image_synthesis, 
-            model='AI-ModelScope/stable-diffusion-xl-base-1.0',
-            use_safetensors=True,
-            model_revision='v1.0.0')
+
             
 def sdxl_infer(prompt: str,
                       negative_prompt: str, 
@@ -48,6 +45,11 @@ def sdxl_infer(prompt: str,
                       scale: float = 10, 
                       steps: int = 50, 
                       seed: int = 0):
+    pipe = pipeline(task=Tasks.text_to_image_synthesis, 
+            model='AI-ModelScope/stable-diffusion-xl-base-1.0',
+            use_safetensors=True,
+            model_revision='v1.0.0')
+
     if not prompt:
        raise gr.Error('提示词不能为空。(Please enter the prompts.)')
     generator = torch.Generator(device='cuda').manual_seed(seed)
@@ -64,4 +66,7 @@ def sdxl_infer(prompt: str,
     image_path = './lora_result.png'
     cv2.imwrite(image_path, result)
     image = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
+
+    del pipe
+    torch.cuda.empty_cache()
     return image
