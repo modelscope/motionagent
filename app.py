@@ -1,9 +1,9 @@
 # Copyright (c) Alibaba, Inc. and its affiliates.
 import gradio as gr
-from motionagent.inference.qwen_infer import qwen_infer, PROMPT_TEMPLATE
-from motionagent.inference.clip_infer import clip_infer
-from motionagent.inference.sdxl_infer import sdxl_infer, STYLE_TEMPLATE, GENERAL_STYLE
-from motionagent.inference.I2VGen_infer import i2v_infer, v2v_infer
+from inference.qwen_infer import qwen_infer, PROMPT_TEMPLATE
+from inference.clip_infer import clip_infer
+from inference.sdxl_infer import sdxl_infer, STYLE_TEMPLATE, GENERAL_STYLE
+from inference.I2VGen_infer import i2v_infer, v2v_infer
 
 def script_gen():
     with gr.Blocks() as demo:
@@ -60,7 +60,7 @@ def script_gen():
                     outputs=[story_theme, image, story])
     return demo, script
 
-def production_still_gen(script):
+def production_still_gen():
     with gr.Blocks() as demo:
         gr.Markdown("""<center><font size=5>剧照生成(movie still Generation)</center>""")
         with gr.Box():
@@ -68,7 +68,7 @@ def production_still_gen(script):
             gr.Markdown("""<left><font size=3>Step 1: Enter a script scene, then click "Submit" to obtain the corresponding movie still scene description and the prompt.</left>""")
             with gr.Row():
                 with gr.Column(scale=1):
-                    script = gr.Textbox(label='剧本(Script)',placeholder='请输入剧本中的一幕\n(Please enter a scene from the script.)',value=script,lines=8)
+                    script = gr.Textbox(label='剧本(Script)',placeholder='请输入剧本中的一幕\n(Please enter a scene from the script.)',lines=8)
                     with gr.Row():
                         clear_prompt = gr.Button('清空(Clear)')
                         submit_prompt = gr.Button('生成(Submit)')
