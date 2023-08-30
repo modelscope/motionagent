@@ -14,3 +14,4 @@ rotary-embedding-torch
 fairscale 
 scipy
 imageio
+audiocraft
