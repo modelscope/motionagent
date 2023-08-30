@@ -8,10 +8,12 @@ xformers==0.0.20
 torchsde
 open_clip_torch>=2.0.2
 opencv-python-headless
-opencv-python 
+opencv-python
 einops>=0.4
 rotary-embedding-torch
-fairscale 
+fairscale
 scipy
 imageio
 audiocraft
+easydict
+pytorch_lightning
