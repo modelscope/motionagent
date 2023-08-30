@@ -4,6 +4,7 @@ from inference.qwen_infer import qwen_infer, PROMPT_TEMPLATE
 from inference.clip_infer import clip_infer
 from inference.sdxl_infer import sdxl_infer, STYLE_TEMPLATE, GENERAL_STYLE
 from inference.I2VGen_infer import i2v_infer, v2v_infer
+from inference.music_infer import music_infer
 
 def script_gen():
     with gr.Blocks() as demo:
@@ -62,7 +63,7 @@ def script_gen():
 
 def production_still_gen():
     with gr.Blocks() as demo:
-        gr.Markdown("""<center><font size=5>剧照生成(movie still Generation)</center>""")
+        gr.Markdown("""<center><font size=5>剧照生成(Movie still Generation)</center>""")
         with gr.Box():
             gr.Markdown("""<left><font size=3>Step 1: 填入一幕剧本，然后点击“生成”，可以得到对应剧本的剧照场景描述和文生图提示词。</left>""")
             gr.Markdown("""<left><font size=3>Step 1: Enter a script scene, then click "Submit" to obtain the corresponding movie still scene description and the prompt.</left>""")
@@ -115,6 +116,7 @@ def production_still_gen():
                         submit = gr.Button('生成(Submit)')
 
                 submit.click(sdxl_infer, inputs=[prompt, negative_prompt, height, width, scale, steps, seed], outputs=output_image)
+                clear.click(lambda: [None, None, 1024, 1024, 10, 50, None], inputs=[], outputs=[prompt, negative_prompt, height, width, scale, steps, output_image])
 
             with gr.Accordion("提示词助手(Prompt assistant)", open=False):
                 gr.Markdown("""<left><font size=2>您可以在此定制风格提示词，复制到提示词框中。固定风格提示词可以一定程度上固定剧照的风格。(You can customize your own style prompts here and copy them into the prompt textbox. Using consistent style prompts can help maintain a unified style of the movie stills to some degree.)</left>""")
@@ -157,8 +159,8 @@ def video_gen():
     with gr.Blocks() as demo:
         gr.Markdown("""<center><font size=5>视频生成(Video Generation)</center>""")
         with gr.Box():
-            gr.Markdown("""<left><font size=3>Step 1: 上传剧照，然后点击“生成”，得到满意的视频后进行下一步。</left>""")
-            gr.Markdown("""<left><font size=3>Step 1: Upload a movie still, then click "Submit" to get a satisfactory video before moving to the Step 2.</left>""")
+            gr.Markdown("""<left><font size=3>Step 1: 上传剧照（图片比例1:1），然后点击“生成”，得到满意的视频后进行下一步。</left>""")
+            gr.Markdown("""<left><font size=3>Step 1: Upload a movie still (image ratio 1:1), then click "Submit" to get a satisfactory video before moving to the Step 2.</left>""")
             with gr.Row():
                 with gr.Column():
                     image_in = gr.Image(label="剧照(Movie still)", type="filepath", interactive=True, height=300)
@@ -169,7 +171,7 @@ def video_gen():
                     video_out_1 = gr.Video(label='视频(Video) BY I2VGen-XL', interactive=False, height=300)
         with gr.Box():
             gr.Markdown("""<left><font size=3>Step 2: 补充对视频内容的英文文本描述，然后点击“生成高分辨率视频”。</left>""")
-            gr.Markdown("""<left><font size=3>Step 2: Supplement a text description of the video scene, then click "Submit".</left>""")
+            gr.Markdown("""<left><font size=3>Step 2: Add the English text description of the video you want to generate, then click "Submit".</left>""")
             with gr.Row():
                 with gr.Column():
                     text_in = gr.Textbox(label="视频描述(Video description)", placeholder='请输入对视频场景的英文描述\n(Please enter a description of the video scene.)', lines=8)
@@ -192,20 +194,24 @@ def music_gen():
         gr.Markdown("""<center><font size=5>音乐生成(Music Generation)</center>""")
         with gr.Row():
             with gr.Column():
-                text = gr.Text(label="音乐描述(Music description)", interactive=True, lines=10)
+                description = gr.Text(label="音乐描述(Music description)", interactive=True, lines=10)
                 duration = gr.Slider(minimum=1, maximum=30, value=10, label="生成时长(Duration)", interactive=True)
-                model = gr.Radio(["small", "medium", "large"], label="模型(Model)", value="melody", interactive=True)
+                model_id = gr.Radio(["small"], label="模型(Model)", value="small", interactive=True)
                 with gr.Row():
                     clear = gr.Button("清空(Clear)")
                     submit = gr.Button("生成(Submit)")
-                with gr.Accordion("更多设置(Advanced Options)", open=False):
-                    with gr.Row():
-                        topk = gr.Number(label="Top-k", value=250, interactive=True)
-                        topp = gr.Number(label="Top-p", value=0, interactive=True)
-                        temperature = gr.Number(label="Temperature", value=1.0, interactive=True)
-                        cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
+                # with gr.Accordion("更多设置(Advanced Options)", open=False):
+                #     with gr.Row():
+                #         topk = gr.Number(label="Top-k", value=250, interactive=True)
+                #         topp = gr.Number(label="Top-p", value=0, interactive=True)
+                #         temperature = gr.Number(label="Temperature", value=1.0, interactive=True)
+                #         cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
             with gr.Column():
                 output = gr.Video(label="Music BY MusicGen", interactive=False)
+
+            submit.click(music_infer, inputs=[model_id, description, duration], outputs=[output])
+            clear.click(lambda: ["small", None, 10, None], inputs=[], outputs=[model_id, description, duration, output])
+
     return demo
 
 
