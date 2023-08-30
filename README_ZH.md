@@ -14,9 +14,6 @@ MotionAgent是一个能将用户创造的剧本生成视频的深度学习模型
 MotionAgent的模型由[ModelScope](https://github.com/modelscope/modelscope)开源模型社区提供支持。
 
 
-![image](resources/git_cover_CH.jpg)
-
-
 # 功能特性
 - 剧本生成（Script Generation）
   - 用户指定故事主题和背景，即可生成剧本
@@ -39,7 +36,7 @@ MotionAgent的模型由[ModelScope](https://github.com/modelscope/modelscope)开
 - torch2.0.1
 - CUDA11.7
 - OS: Ubuntu 20.04
-- Nvidia-A100
+- Nvidia-A100 40G
 
 
 ## 资源要求
