@@ -72,13 +72,13 @@ python3 app.py
               
 ## 模型列表
 
-[1]  Qwen-7B-Chat： [模型链接](https://modelscope.cn/models/qwen/Qwen-7B-Chat/summary)   [创空间链接](https://modelscope.cn/studios/qwen/Qwen-7B-Chat-Demo/summary)
+[1]  Qwen-7B-Chat： [模型](https://modelscope.cn/models/qwen/Qwen-7B-Chat/summary)  |  [创空间](https://modelscope.cn/studios/qwen/Qwen-7B-Chat-Demo/summary)
 
-[2]  SDXL 1.0：[模型链接](https://modelscope.cn/models/AI-ModelScope/stable-diffusion-xl-base-1.0/summary)  [创空间链接](https://modelscope.cn/studios/AI-ModelScope/Stable_Diffusion_XL_1.0/summary)
+[2]  SDXL 1.0：[模型](https://modelscope.cn/models/AI-ModelScope/stable-diffusion-xl-base-1.0/summary)  |  [创空间](https://modelscope.cn/studios/AI-ModelScope/Stable_Diffusion_XL_1.0/summary)
 
-[3]  I2VGen-XL： [模型链接](https://modelscope.cn/models/damo/Image-to-Video/summary)  [创空间链接](https://modelscope.cn/models/damo/Video-to-Video/summary)
+[3]  I2VGen-XL： [模型](https://modelscope.cn/models/damo/Image-to-Video/summary)  |  [创空间](https://modelscope.cn/models/damo/Video-to-Video/summary)
 
-[4]  MusicGen： [模型链接](https://modelscope.cn/models/AI-ModelScope/musicgen-large/summary)  [创空间链接](https://modelscope.cn/studios/AI-ModelScope/MusicGen/summary)
+[4]  MusicGen： [模型](https://modelscope.cn/models/AI-ModelScope/musicgen-large/summary)  |  [创空间](https://modelscope.cn/studios/AI-ModelScope/MusicGen/summary)
 
                             
 
