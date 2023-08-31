@@ -33,7 +33,6 @@ PROMPT_TEMPLATE = {
 }
 
 
-
 client_chat = Client('https://modelscope.cn/api/v1/studio/qwen/Qwen-7B-Chat-Demo/gradio/')
 
 

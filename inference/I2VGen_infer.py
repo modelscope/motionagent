@@ -3,6 +3,7 @@ from modelscope.outputs import OutputKeys
 import torch
 import gradio as gr
 
+
 def i2v_infer_func(image_in):
     image_to_video_pipe = pipeline(task="image-to-video", model='damo/Image-to-Video', model_revision='v1.1.0')
     print(image_in)
@@ -15,7 +16,7 @@ def i2v_infer_func(image_in):
 
 def i2v_infer(image_in):
     if image_in is None:
-            raise gr.Error('请上传图片或等待图片上传完成(Please upload an image or wait for the image to finish uploading.)')
+        raise gr.Error('请上传图片或等待图片上传完成(Please upload an image or wait for the image to finish uploading.)')
     return i2v_infer_func(image_in)
 
 

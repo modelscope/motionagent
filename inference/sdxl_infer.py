@@ -37,30 +37,28 @@ STYLE_TEMPLATE = {
 } 
 
 
-            
 def sdxl_infer(prompt: str,
-                      negative_prompt: str, 
-                      height: int = 1024, 
-                      width: int = 1024,
-                      scale: float = 10, 
-                      steps: int = 50, 
-                      seed: int = 0):
-    pipe = pipeline(task=Tasks.text_to_image_synthesis, 
-            model='AI-ModelScope/stable-diffusion-xl-base-1.0',
-            use_safetensors=True,
-            model_revision='v1.0.0')
+               negative_prompt: str,
+               height: int = 1024,
+               width: int = 1024,
+               scale: float = 10,
+               steps: int = 50,
+               seed: int = 0):
+    pipe = pipeline(task=Tasks.text_to_image_synthesis,
+                    model='AI-ModelScope/stable-diffusion-xl-base-1.0',
+                    use_safetensors=True,
+                    model_revision='v1.0.0')
 
     if not prompt:
-       raise gr.Error('提示词不能为空。(Please enter the prompts.)')
+        raise gr.Error('提示词不能为空。(Please enter the prompts.)')
     generator = torch.Generator(device='cuda').manual_seed(seed)
-    output = pipe({'text': prompt, 
-                    'negative_prompt': negative_prompt,
-                    'num_inference_steps': steps,
-                    'guidance_scale': scale,
-                    'height': height,
-                    'width': width,
-                    'generator': generator
-                    })
+    output = pipe({'text': prompt,
+                   'negative_prompt': negative_prompt,
+                   'num_inference_steps': steps,
+                   'guidance_scale': scale,
+                   'height': height,
+                   'width': width,
+                   'generator': generator})
     result = output['output_imgs'][0]
 
     image_path = './lora_result.png'
