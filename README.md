@@ -9,6 +9,8 @@
 
 # Introduction
 
+如果您熟悉中文，可以阅读[中文版本的README](./README_ZH.md)。
+
 MotionAgent is a deep learning model tool that can generate videos from user-created scripts. Users can create scripts, generate movie stills, generate images/videos, and compose background music through our provided toolset.
 
 The model of MotionAgent is powered by the open-source model community [ModelScope](https://github.com/modelscope/modelscope).
