@@ -12,32 +12,33 @@ def script_gen():
         with gr.Box():
             with gr.Row():
                 with gr.Column(scale=1):
-                    theme = gr.Textbox(label='主题(Theme)',placeholder='请输入剧本主题，如“未来科幻片“\n(Please enter the theme of the script, e.g., science fiction film.)',lines=2)
-                    background= gr.Textbox(label='背景(Background)',placeholder='请输入剧本背景，如“太空”\n(Please enter the script background, e.g., space.)',lines=2)
+                    theme = gr.Textbox(label='主题(Theme)', placeholder='请输入剧本主题，如“未来科幻片“\n(Please enter the theme of the script, e.g., science fiction film.)', lines=2)
+                    background= gr.Textbox(label='背景(Background)', placeholder='请输入剧本背景，如“太空”\n(Please enter the script background, e.g., space.)', lines=2)
+                    scenario = gr.Textbox(label='剧情要求(Plot)', placeholder='请输入剧情要求，如“充满想象力，跌宕起伏”\n(Please enter plot requirements, e.g., "imaginative, suspenseful ups and downs".)', lines=3)
+                    language = gr.Radio(choices=['中文(Chinese)', '英文(English)'], label='语言(Language)', value='中文(Chinese)', interactive=True)
                     act = gr.Slider(minimum=1, maximum=6, value=3, step=1, interactive=True, label='剧本幕数(The number of scenes in the script)')
-                    scenario = gr.Textbox(label='剧情要求(Plot)',placeholder='请输入剧情要求，如“充满想象力，跌宕起伏”\n(Please enter plot requirements, e.g., "imaginative, suspenseful ups and downs".)',lines=3)
                     with gr.Row():
                         clear_script = gr.Button('清空(Clear)')
                         submit_script = gr.Button('生成剧本(Submit)')
                 with gr.Column(scale=2):
-                    script = gr.Textbox(label='剧本(Script) BY Qwen-7B-Chat',interactive=False, lines=15)
+                    script = gr.Textbox(label='剧本(Script) BY Qwen-7B-Chat', interactive=False, lines=15)
         
         with gr.Box():
             with gr.Accordion("图片生成微剧本(Image to story)", open=False):
                 with gr.Row():
                     with gr.Column(scale=1): 
                         image = gr.Image(label='图片(Image)', type="filepath", interactive=True, height=200)
-                        story_theme = gr.Textbox(label='主题(Theme)',placeholder='请输入剧本主题，如“爱情片“\n(Please enter the theme of the story, e.g., affectional film.)',lines=2)
+                        story_theme = gr.Textbox(label='主题(Theme)', placeholder='请输入剧本主题，如“爱情片“\n(Please enter the theme of the story, e.g., affectional film.)', lines=2)
                         with gr.Row():
                             clear_story = gr.Button('清空(Clear)')
                             submit_story = gr.Button('生成微剧本(Submit)')
                     with gr.Column(scale=2):
-                        story = gr.Textbox(label='微剧本(Story) BY Qwen-7B-Chat',interactive=False, lines=8)
+                        story = gr.Textbox(label='微剧本(Story) BY Qwen-7B-Chat', interactive=False, lines=8)
 
 
-        def qwen_script(theme, background, act, scenario):
-            inputs = PROMPT_TEMPLATE['script'].format(theme=theme, background=background, act=act, scenario=scenario)
-            script = qwen_infer(input=inputs)
+        def qwen_script(theme, background, act, scenario, language):
+            inputs = PROMPT_TEMPLATE['script'].format(theme=theme, background=background, act=act, scenario=scenario, language=language)
+            script = qwen_infer(inputs=inputs)
             return script
         
         def qwen_story(story_theme, image):
@@ -47,7 +48,7 @@ def script_gen():
             return story
 
         submit_script.click(qwen_script,
-                    inputs=[theme, background, act, scenario], 
+                    inputs=[theme, background, act, scenario, language], 
                     outputs=[script])
         clear_script.click(lambda: [None, None, 3, None, None], 
                     inputs=[], 
@@ -69,26 +70,27 @@ def production_still_gen():
             gr.Markdown("""<left><font size=3>Step 1: Enter a script scene, then click "Submit" to obtain the corresponding movie still scene description and the prompt.</left>""")
             with gr.Row():
                 with gr.Column(scale=1):
-                    script = gr.Textbox(label='剧本(Script)',placeholder='请输入剧本中的一幕\n(Please enter a scene from the script.)',lines=8)
+                    script = gr.Textbox(label='剧本(Script)', placeholder='请输入剧本中的一幕\n(Please enter a scene from the script.)', lines=8)
+                    language = gr.Radio(choices=['中文(Chinese)', '英文(English)'], label='语言(Language)', value='中文(Chinese)', interactive=True)
                     with gr.Row():
                         clear_prompt = gr.Button('清空(Clear)')
                         submit_prompt = gr.Button('生成(Submit)')
                 with gr.Column(scale=2):
-                    still_description = gr.Textbox(label='剧照描述(Movie still description) BY Qwen-7B-Chat',lines=5, interactive=False)
+                    still_description = gr.Textbox(label='剧照描述(Movie still description) BY Qwen-7B-Chat', lines=5, interactive=False)
                     SD_prompt = gr.Textbox(label='提示词(Prompt) BY Qwen-7B-Chat', lines=5, interactive=False)
 
-            def qwen_still(script):
-                inputs = PROMPT_TEMPLATE['still'].format(script=script)
-                still_description = qwen_infer(input=inputs)
+            def qwen_still(script, language):
+                inputs = PROMPT_TEMPLATE['still'].format(script=script, language=language)
+                still_description = qwen_infer(inputs=inputs)
                 return still_description
             
             def qwen_sd_prompt(still_description):
                 inputs = PROMPT_TEMPLATE['SD'].format(still_description=still_description)
-                SD_prompt = qwen_infer(input=inputs)
+                SD_prompt = qwen_infer(inputs=inputs)
                 return SD_prompt
 
             submit_prompt.click(qwen_still, 
-                                inputs=[script], 
+                                inputs=[script, language], 
                                 outputs=[still_description]).then(qwen_sd_prompt, inputs=[still_description], outputs=[SD_prompt])
             clear_prompt.click(lambda: [None, None, None], 
                         inputs=[], 
@@ -159,8 +161,8 @@ def video_gen():
     with gr.Blocks() as demo:
         gr.Markdown("""<center><font size=5>视频生成(Video Generation)</center>""")
         with gr.Box():
-            gr.Markdown("""<left><font size=3>Step 1: 上传剧照（图片比例1:1），然后点击“生成”，得到满意的视频后进行下一步。</left>""")
-            gr.Markdown("""<left><font size=3>Step 1: Upload a movie still (image ratio 1:1), then click "Submit" to get a satisfactory video before moving to the Step 2.</left>""")
+            gr.Markdown("""<left><font size=3>Step 1: 上传剧照（建议图片比例为1:1），然后点击“生成”，得到满意的视频后进行下一步。</left>""")
+            gr.Markdown("""<left><font size=3>Step 1: Upload a movie still (it is recommended that the image ratio is 1:1), then click "Submit" to get a satisfactory video before moving to the Step 2.</left>""")
             with gr.Row():
                 with gr.Column():
                     image_in = gr.Image(label="剧照(Movie still)", type="filepath", interactive=True, height=300)
@@ -196,7 +198,7 @@ def music_gen():
             with gr.Column():
                 description = gr.Text(label="音乐描述(Music description)", interactive=True, lines=10)
                 duration = gr.Slider(minimum=1, maximum=30, value=10, label="生成时长(Duration)", interactive=True)
-                model_id = gr.Radio(["small"], label="模型(Model)", value="small", interactive=True)
+                # model_id = gr.Radio(["small"], label="模型(Model)", value="small", interactive=True)
                 with gr.Row():
                     clear = gr.Button("清空(Clear)")
                     submit = gr.Button("生成(Submit)")
@@ -209,8 +211,8 @@ def music_gen():
             with gr.Column():
                 output = gr.Video(label="Music BY MusicGen", interactive=False)
 
-            submit.click(music_infer, inputs=[model_id, description, duration], outputs=[output])
-            clear.click(lambda: ["small", None, 10, None], inputs=[], outputs=[model_id, description, duration, output])
+            submit.click(music_infer, inputs=[description, duration], outputs=[output])
+            clear.click(lambda: ["small", None, 10, None], inputs=[], outputs=[description, duration, output])
 
     return demo
 
