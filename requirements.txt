@@ -24,3 +24,4 @@ rapidfuzz
 decord>=0.6.0
 transformers_stream_generator
 tiktoken
+transformers==4.32.1
