@@ -22,45 +22,20 @@ def script_gen():
                         submit_script = gr.Button('生成剧本(Submit)')
                 with gr.Column(scale=2):
                     script = gr.Textbox(label='剧本(Script) BY Qwen-7B-Chat', interactive=False, lines=15)
-        
-        with gr.Box():
-            with gr.Accordion("图片生成微剧本(Image to story)", open=False):
-                with gr.Row():
-                    with gr.Column(scale=1): 
-                        image = gr.Image(label='图片(Image)', type="filepath", interactive=True, height=200)
-                        story_theme = gr.Textbox(label='主题(Theme)', placeholder='请输入剧本主题，如“爱情片“\n(Please enter the theme of the story, e.g., affectional film.)', lines=2)
-                        with gr.Row():
-                            clear_story = gr.Button('清空(Clear)')
-                            submit_story = gr.Button('生成微剧本(Submit)')
-                    with gr.Column(scale=2):
-                        story = gr.Textbox(label='微剧本(Story) BY Qwen-7B-Chat', interactive=False, lines=8)
-
 
         def qwen_script(theme, background, act, scenario, language):
             inputs = PROMPT_TEMPLATE['script'].format(theme=theme, background=background, act=act, scenario=scenario, language=language)
             script = qwen_infer(inputs=inputs)
             return script
-        
-        def qwen_story(story_theme, image):
-            picture = clip_infer(image)
-            inputs = PROMPT_TEMPLATE['story'].format(story_theme=story_theme, picture=picture)
-            story = qwen_infer(input=inputs)
-            return story
 
         submit_script.click(qwen_script,
                     inputs=[theme, background, act, scenario, language], 
                     outputs=[script])
         clear_script.click(lambda: [None, None, 3, None, None], 
                     inputs=[], 
-                    outputs=[theme, background, act, scenario, script])
-        
-        submit_story.click(qwen_story,
-                    inputs=[story_theme, image], 
-                    outputs=[story])
-        clear_story.click(lambda: [None, None, None], 
-                    inputs=[], 
-                    outputs=[story_theme, image, story])
-    return demo, script
+                    outputs=[theme, background, act, scenario, script], 
+                    queue=False)
+    return demo
 
 def production_still_gen():
     with gr.Blocks() as demo:
@@ -94,7 +69,8 @@ def production_still_gen():
                                 outputs=[still_description]).then(qwen_sd_prompt, inputs=[still_description], outputs=[SD_prompt])
             clear_prompt.click(lambda: [None, None, None], 
                         inputs=[], 
-                        outputs=[script, still_description, SD_prompt])
+                        outputs=[script, still_description, SD_prompt], 
+                        queue=False)
         
         with gr.Box():
             gr.Markdown("""<left><font size=3>Step 2: 复制上一步中得到的提示词，选择合适的风格和参数，点击“生成”，得到剧照。</left>""")
@@ -118,7 +94,7 @@ def production_still_gen():
                         submit = gr.Button('生成(Submit)')
 
                 submit.click(sdxl_infer, inputs=[prompt, negative_prompt, height, width, scale, steps, seed], outputs=output_image)
-                clear.click(lambda: [None, None, 1024, 1024, 10, 50, None], inputs=[], outputs=[prompt, negative_prompt, height, width, scale, steps, output_image])
+                clear.click(lambda: [None, None, 1024, 1024, 10, 50, None], inputs=[], outputs=[prompt, negative_prompt, height, width, scale, steps, output_image], queue=False)
 
             with gr.Accordion("提示词助手(Prompt assistant)", open=False):
                 gr.Markdown("""<left><font size=2>您可以在此定制风格提示词，复制到提示词框中。固定风格提示词可以一定程度上固定剧照的风格。(You can customize your own style prompts here and copy them into the prompt textbox. Using consistent style prompts can help maintain a unified style of the movie stills to some degree.)</left>""")
@@ -185,8 +161,8 @@ def video_gen():
     
         submit_image.click(i2v_infer, inputs=[image_in], outputs=[video_out_1])
         submit_video.click(v2v_infer, inputs=[video_out_1, text_in], outputs=[video_out_2])
-        clear_image.click(lambda: [None, None], inputs=[], outputs=[image_in, video_out_1])
-        clear_video.click(lambda: [None, None], inputs=[], outputs=[text_in, video_out_2])
+        clear_image.click(lambda: [None, None], inputs=[], outputs=[image_in, video_out_1], queue=False)
+        clear_video.click(lambda: [None, None], inputs=[], outputs=[text_in, video_out_2], queue=False)
 
     return demo
 
@@ -198,21 +174,14 @@ def music_gen():
             with gr.Column():
                 description = gr.Text(label="音乐描述(Music description)", interactive=True, lines=10)
                 duration = gr.Slider(minimum=1, maximum=30, value=10, label="生成时长(Duration)", interactive=True)
-                # model_id = gr.Radio(["small"], label="模型(Model)", value="small", interactive=True)
                 with gr.Row():
                     clear = gr.Button("清空(Clear)")
                     submit = gr.Button("生成(Submit)")
-                # with gr.Accordion("更多设置(Advanced Options)", open=False):
-                #     with gr.Row():
-                #         topk = gr.Number(label="Top-k", value=250, interactive=True)
-                #         topp = gr.Number(label="Top-p", value=0, interactive=True)
-                #         temperature = gr.Number(label="Temperature", value=1.0, interactive=True)
-                #         cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
             with gr.Column():
                 output = gr.Video(label="Music BY MusicGen", interactive=False)
 
             submit.click(music_infer, inputs=[description, duration], outputs=[output])
-            clear.click(lambda: ["small", None, 10, None], inputs=[], outputs=[description, duration, output])
+            clear.click(lambda: ["small", None, 10, None], inputs=[], outputs=[description, duration, output], queue=False)
 
     return demo
 
@@ -220,6 +189,7 @@ def music_gen():
 
 with gr.Blocks() as demo:
     gr.Markdown("""<center><font size=8>MotionAgent</center>""")
+    gr.Markdown("# <center> <font size=4>\N{fire} [Github star it here](https://github.com/modelscope/motionagent/tree/main)</center>")
     with gr.Tabs():
         with gr.TabItem('剧本生成(Script Generation)'):
             script_gen()
