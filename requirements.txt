@@ -22,3 +22,4 @@ unicodedata2
 zhconv
 rapidfuzz
 decord>=0.6.0
+shutil
