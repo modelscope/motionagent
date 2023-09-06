@@ -22,3 +22,7 @@ unicodedata2
 zhconv
 rapidfuzz
 decord>=0.6.0
+transformers_stream_generator
+tiktoken
+transformers>=4.31.0
+accelerate
