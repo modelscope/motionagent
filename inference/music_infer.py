@@ -8,8 +8,8 @@ import torch
 
 def music_infer(description, duration):
     model_id = 'AI-ModelScope/musicgen-large'
-    sambert_hifigan_tts = pipeline(task=Tasks.text_to_speech, model=model_id, model_revision='v1.0.3')
-    output = sambert_hifigan_tts(input=description.replace(',',' '), duration=duration)
+    music_gen = pipeline(task=Tasks.text_to_speech, model=model_id, model_revision='v1.0.4')
+    output = music_gen(input=description, duration=duration, sep="")
     output_dict = output[OutputKeys.OUTPUT_WAV]
     wav = output_dict["wav"]
     sample_rate = output_dict["sample_rate"]
