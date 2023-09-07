@@ -1,10 +1,17 @@
 # Copyright (c) Alibaba, Inc. and its affiliates.
+import argparse
 import gradio as gr
 from inference.qwen_infer import qwen_infer, PROMPT_TEMPLATE
 from inference.clip_infer import clip_infer
 from inference.sdxl_infer import sdxl_infer, STYLE_TEMPLATE, GENERAL_STYLE
 from inference.I2VGen_infer import i2v_infer, v2v_infer
 from inference.music_infer import music_infer
+from functools import partial
+
+# Whether clear download model weights
+parser = argparse.ArgumentParser()
+parser.add_argument("--clear_cache", "--clear", action="store_true", default=False, help="Clean up downloaded model weights to save memory space")
+clear_cache = parser.parse_args().clear_cache
 
 def script_gen():
     with gr.Blocks() as demo:
@@ -25,7 +32,8 @@ def script_gen():
 
         def qwen_script(theme, background, act, scenario, language):
             inputs = PROMPT_TEMPLATE['script'].format(theme=theme, background=background, act=act, scenario=scenario, language=language)
-            script = qwen_infer(inputs=inputs)
+            qwen_infer_p = partial(qwen_infer, clear_cache=clear_cache)
+            script = qwen_infer_p(inputs=inputs)
             return script
 
         submit_script.click(qwen_script,
@@ -56,12 +64,14 @@ def production_still_gen():
 
             def qwen_still(script, language):
                 inputs = PROMPT_TEMPLATE['still'].format(script=script, language=language)
-                still_description = qwen_infer(inputs=inputs)
+                qwen_infer_p = partial(qwen_infer, clear_cache=clear_cache)
+                still_description = qwen_infer_p(inputs=inputs)
                 return still_description
             
             def qwen_sd_prompt(still_description):
                 inputs = PROMPT_TEMPLATE['SD'].format(still_description=still_description)
-                SD_prompt = qwen_infer(inputs=inputs)
+                qwen_infer_p = partial(qwen_infer, clear_cache=clear_cache)
+                SD_prompt = qwen_infer_p(inputs=inputs)
                 return SD_prompt
 
             submit_prompt.click(qwen_still, 
@@ -93,7 +103,8 @@ def production_still_gen():
                         clear = gr.Button('清空(Clear)')
                         submit = gr.Button('生成(Submit)')
 
-                submit.click(sdxl_infer, inputs=[prompt, negative_prompt, height, width, scale, steps, seed], outputs=output_image)
+                sdxl_infer_p = partial(sdxl_infer, clear_cache=clear_cache)
+                submit.click(sdxl_infer_p, inputs=[prompt, negative_prompt, height, width, scale, steps, seed], outputs=output_image)
                 clear.click(lambda: [None, None, 1024, 1024, 10, 50, None], inputs=[], outputs=[prompt, negative_prompt, height, width, scale, steps, output_image], queue=False)
 
             with gr.Accordion("提示词助手(Prompt assistant)", open=False):
@@ -158,9 +169,10 @@ def video_gen():
                         submit_video = gr.Button("生成高分辨率视频(Submit)")
                 with gr.Column():
                     video_out_2 = gr.Video(label='高分辨率视频(High-resolutions video) BY MS-Vid2Vid-XL', interactive=False, height=300)
-    
-        submit_image.click(i2v_infer, inputs=[image_in], outputs=[video_out_1])
-        submit_video.click(v2v_infer, inputs=[video_out_1, text_in], outputs=[video_out_2])
+        i2v_infer_p = partial(i2v_infer, clear_cache=clear_cache)
+        v2v_infer_p = partial(v2v_infer, clear_cache=clear_cache)
+        submit_image.click(i2v_infer_p, inputs=[image_in], outputs=[video_out_1])
+        submit_video.click(v2v_infer_p, inputs=[video_out_1, text_in], outputs=[video_out_2])
         clear_image.click(lambda: [None, None], inputs=[], outputs=[image_in, video_out_1], queue=False)
         clear_video.click(lambda: [None, None], inputs=[], outputs=[text_in, video_out_2], queue=False)
 
@@ -180,7 +192,8 @@ def music_gen():
             with gr.Column():
                 output = gr.Video(label="Music BY MusicGen", interactive=False)
 
-            submit.click(music_infer, inputs=[description, duration], outputs=[output])
+            music_infer_p = partial(music_infer, clear_cache=clear_cache)
+            submit.click(music_infer_p, inputs=[description, duration], outputs=[output])
             clear.click(lambda: ["small", None, 10, None], inputs=[], outputs=[description, duration, output], queue=False)
 
     return demo

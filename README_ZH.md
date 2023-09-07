@@ -65,6 +65,8 @@ python3 app.py
 
 # Note: MotionAgent目前支持单卡GPU，如果您的环境有多卡，请使用如下命令
 # CUDA_VISIBLE_DEVICES=0 python3 app.py
+# Note: 如果您使用了Modelscope社区的Notebook或者您的磁盘剩余内存小于100GB，请使用如下命令
+# python3 app.py --clear_cache
 
 # 最后点击log中生成的URL即可访问页面。
 ```

@@ -2,8 +2,10 @@
 import json
 import time
 import torch
+import shutil
 from modelscope import AutoModelForCausalLM, AutoTokenizer
 from modelscope import GenerationConfig
+from modelscope.hub.utils.utils import get_cache_dir
 
 SCRIPT_TEMPLATE = """你是一个编剧，请根据提供的短片主题、背景、幕数、剧情要求，设计一个剧本。
 主题：{theme}
@@ -35,7 +37,11 @@ PROMPT_TEMPLATE = {
     "SD": SD_PROMPT_TEMPLATE,
 }
 
-def qwen_infer(inputs, history=None):
+def qwen_infer(inputs, history=None, clear_cache=False):
+    if clear_cache:
+        print("Clear download model weights.")
+        cache_dir = get_cache_dir()
+        shutil.rmtree(cache_dir)
     tokenizer = AutoTokenizer.from_pretrained("qwen/Qwen-7B-Chat", revision = 'v1.0.5',trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained("qwen/Qwen-7B-Chat", revision = 'v1.0.5',device_map="auto", trust_remote_code=True,fp16 = True).eval()
     model.generation_config = GenerationConfig.from_pretrained("Qwen/Qwen-7B-Chat",revision = 'v1.0.5', trust_remote_code=True)
