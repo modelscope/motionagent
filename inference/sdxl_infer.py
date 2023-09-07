@@ -1,8 +1,11 @@
+# Copyright (c) Alibaba, Inc. and its affiliates.
 import cv2
 import torch
 import gradio as gr
 from modelscope.utils.constant import Tasks
 from modelscope.pipelines import pipeline
+import shutil
+from modelscope.hub.utils.utils import get_cache_dir
 
 GENERAL_STYLE={
     "无(None)": "",
@@ -43,7 +46,12 @@ def sdxl_infer(prompt: str,
                width: int = 1024,
                scale: float = 10,
                steps: int = 50,
-               seed: int = 0):
+               seed: int = 0,
+               clear_cache: bool = False):
+    if clear_cache:
+        print("Clear download model weights.")
+        cache_dir = get_cache_dir()
+        shutil.rmtree(cache_dir)
     pipe = pipeline(task=Tasks.text_to_image_synthesis,
                     model='AI-ModelScope/stable-diffusion-xl-base-1.0',
                     use_safetensors=True,

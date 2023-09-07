@@ -67,6 +67,8 @@ python3 app.py
 
 # Note: MotionAgent currently supports single-card GPU, if your environment has multiple cards, please use the following command
 # CUDA_VISIBLE_DEVICES=0 python3 app.py
+# Note: If you are using the Modelscope community Notebook or if your disk memory is less than 100GB, please turn on the clear_cache switch. Each run will result in re-downloading the model, causing a significant decrease in speed. Please be patient and wait.
+# python3 app.py --clear_cache
 
 # Finally, click on the URL generated in the log to access the page.
 ```
