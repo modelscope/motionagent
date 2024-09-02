@@ -61,6 +61,10 @@ cd motionagent
 
 # Install dependencies
 pip3 install -r requirements.txt
+pip3 install audiocraft==1.0.0
+
+# Note: you can specify the pypi source to speed up the installation:
+pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # Run the application
 python3 app.py

@@ -11,13 +11,13 @@ opencv-python-headless
 opencv-python
 einops>=0.4
 rotary-embedding-torch
-fairscale
+# fairscale
 scipy
 imageio
-audiocraft
+# audiocraft
 easydict
 pytorch_lightning
-fairseq
+# fairseq
 unicodedata2
 zhconv
 rapidfuzz
